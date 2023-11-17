@@ -1,0 +1,7 @@
+env
+__pycache__
+.vscode
+*.txt
+!requirements.txt
+*.mp4
+*.exe
