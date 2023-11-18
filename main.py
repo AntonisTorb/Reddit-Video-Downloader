@@ -65,9 +65,12 @@ def get_urls(page_url: str) -> tuple[str, str]|tuple[None, None]:
     if r.status_code != 200:
         print(f"{r.status_code} for {page_url}. Please check URL provided and your connection status.")
         return None, None
-
-    video_url = r.json()[0]["data"]["children"][0]["data"]["secure_media"]["reddit_video"]["fallback_url"][:-16]
-    has_audio = r.json()[0]["data"]["children"][0]["data"]["secure_media"]["reddit_video"]["has_audio"]
+    try:
+        video_url = r.json()[0]["data"]["children"][0]["data"]["secure_media"]["reddit_video"]["fallback_url"][:-16]
+        has_audio = r.json()[0]["data"]["children"][0]["data"]["secure_media"]["reddit_video"]["has_audio"]
+    except TypeError:
+        print("Post does not contain a video.")
+        return None, None
     if has_audio:
         audio_url = f"https://v.redd.it/{video_url.split('/')[3]}/DASH_AUDIO_128.mp4"
     else:
@@ -161,8 +164,7 @@ def get_video(page_url: str, headers: dict[dict[str,str]]) -> None:
     # Get info on audio content length.
     r_aud_info = request_with_retries(audio_url, headers["headers_audio"], [206, 403])
     if r_aud_info.status_code == 403:
-        # Older format.
-        audio_url = audio_url.replace("AUDIO_128", "audio")
+        audio_url = audio_url.replace("AUDIO_128", "audio")  # Older format.
         time.sleep(2)
         r_aud_info = request_with_retries(audio_url, headers["headers_audio"])
 
@@ -200,14 +202,18 @@ def get_video(page_url: str, headers: dict[dict[str,str]]) -> None:
         with open(f"_audio-{filename_final}.mp4", "wb") as file:
             file.write(r_audio.content)
 
-    # Combine video and audio files.
-    subprocess.run(
-        f'ffmpeg -hide_banner -loglevel error -i "_video-{filename_final}.mp4" -i "_audio-{filename_final}.mp4" -map "0:0" -map "1:0" -c copy "{filename_final}.mp4"'
-    )
+    try:
+        # Combine video and audio files.
+        subprocess.run(
+            f'ffmpeg -hide_banner -loglevel error -i "_video-{filename_final}.mp4" -i "_audio-{filename_final}.mp4" -map "0:0" -map "1:0" -c copy "{filename_final}.mp4"'
+        )
 
-    # Remove temporary files. 
-    os.remove(f"_video-{filename_final}.mp4")
-    os.remove(f"_audio-{filename_final}.mp4")
+        # Remove temporary files. 
+        os.remove(f"_video-{filename_final}.mp4")
+        os.remove(f"_audio-{filename_final}.mp4")
+    except:
+        print("FFMPEG error, leaving separate video and audio files.")
+    
     print(f"{page_url}: Done!")
 
 
