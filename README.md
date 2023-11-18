@@ -2,11 +2,11 @@
 Python CLI app to download videos from Reddit.
 
 ## !!! IMPORTANT !!!
-The script requires [FFMPPEG](https://ffmpeg.org/) to be installed in order to combine video and audio files. You can find several tutorials on YouTube on how to install it (I personally use [this one](https://github.com/yt-dlp/FFmpeg-Builds/releases/tag/latest) from yt-dlp).
+The script requires [FFMPPEG](https://ffmpeg.org/) to be installed in order to combine video and audio files. You can find several tutorials on YouTube on how to install it (I personally use [this build](https://github.com/yt-dlp/FFmpeg-Builds/releases/tag/latest) from the yt-dlp project).
 
 ## Parameters:
         -h, --help            show this help message and exit
-        -u URL, --url URL     Download vodeo from provided URL.
+        -u URL, --url URL     Download video from provided URL.
         -f FILE, --file FILE  Download videos from URLs in provided .txt file (one URL per line).
 
 ## How to use
@@ -27,8 +27,8 @@ There are two ways to download videos using this app:
         python main.py -f "path to file.txt"
 
 ## To do
-- Add download in parts functionality for longer video lengths.
-- Add retries in case of network disruptions.
+- ~~Add download in parts functionality for longer video lengths.~~ Done!
+- ~~Add retries in case of network disruptions.~~ Done!
 - Bug fixes/optimization/refactoring.
 
 ## Thank you and enjoy!
