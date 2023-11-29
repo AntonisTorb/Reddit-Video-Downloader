@@ -6,8 +6,20 @@ import time
 
 import requests
 
-
 class RedditVideoDownloader:
+    ''' Used to download single/multiple videos from Reddit.
+
+        - get_video: Used to download a single video from a URL.
+
+            url : str
+                URL of the Reddit webpage containing the video.
+
+        - get_multi_videos: Used to download multiple videos from a list of URLs.
+
+            url_list : list[str]
+                List of URLs of the Reddit webpages containing the videos.
+    '''
+
     def __init__(self) -> None:
         self.headers = {
             "headers_video": {
@@ -223,15 +235,9 @@ class RedditVideoDownloader:
         print(f"{page_url}: Done!")
 
 
-    def get_multi_videos(self, file_path: str) -> None:
+    def get_multi_videos(self, url_list: list[str]) -> None:
         '''Used to download multiple files in sequence.'''
 
-        file_path = Path(file_path)
-        if not file_path.exists():
-            print("Filepath for url source does not exist!")
-            return
-        with open(file_path, "r") as file:
-            url_list = file.read().splitlines()
         for page_url in url_list:
             self.get_video(page_url)
             time.sleep(2)
@@ -252,7 +258,12 @@ if __name__ == "__main__":
     
     if page_url:
         rvd.get_video(page_url)
-    elif url_file:
-        rvd.get_multi_videos(url_file)
-    else:
+    if url_file:   
+        try:
+            with open(url_file, "r") as file:
+                url_list = file.read().splitlines()
+            rvd.get_multi_videos(url_list)
+        except FileNotFoundError:
+            print("Text file containing the URLs does not exist!")
+    if not page_url and not url_file:
         print("Use command: 'python main.py -h' or 'python3 main.py -h' for assistance.")
