@@ -156,7 +156,7 @@ class RedditVideoDownloader:
             self.headers["headers_video"]["Range"] = f"bytes=0-{max_vid}"
 
             # Get video file.
-            r_video = self._request_with_retries(video_url, self._headers["headers_video"])
+            r_video = self._request_with_retries(video_url, self.headers["headers_video"])
             if r_video.status_code != 206:
                 print(f"Error {r_video.status_code} getting video file.")
                 if Path(f"_video-{filename_final}.mp4").exists():

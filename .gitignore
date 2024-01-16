@@ -5,3 +5,4 @@ __pycache__
 !requirements.txt
 *.mp4
 *.exe
+*.json
