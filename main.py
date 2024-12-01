@@ -223,14 +223,25 @@ class RedditVideoDownloader:
         try:
             # Combine video and audio files.
             subprocess.run(
-                f'ffmpeg -hide_banner -loglevel error -i "_video-{filename_final}.mp4" -i "_audio-{filename_final}.mp4" -map "0:0" -map "1:0" -c copy "{filename_final}.mp4"'
+                [
+                    'ffmpeg',
+                    '-hide_banner',
+                    '-loglevel', 'error',
+                    '-i', f'_video-{filename_final}.mp4',
+                    '-i', f'_audio-{filename_final}.mp4',
+                    '-map', '0:0',
+                    '-map', '1:0',
+                    '-c', 'copy',
+                    f'{filename_final}.mp4'
+                ],
+                check=True
             )
 
             # Remove temporary files. 
             os.remove(f"_video-{filename_final}.mp4")
             os.remove(f"_audio-{filename_final}.mp4")
-        except:
-            print("FFMPEG error, leaving separate video and audio files.")
+        except Exception as e:
+            print("FFMPEG error, leaving separate video and audio files:", e)
         
         print(f"{page_url}: Done!")
 
